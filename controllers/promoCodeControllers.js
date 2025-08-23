@@ -1,27 +1,25 @@
 const PromoCodeServices = require('../services/promoCodeServices');
 const UserPromoCodeServices = require('../services/userPromoCodeServices');
 
-async function getAllPromoCodes(req, res) {
+async function getAllPromoCodes(req, res, next) {
     try {
         const promoCodes = await PromoCodeServices.getAllPromoCodes();
         res.status(200).json(promoCodes);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération des codes promo" });
+        return next(error);
     }
 }
 
-async function createPromoCode(req, res) {
+async function createPromoCode(req, res, next) {
     try {
         const promoCode = await PromoCodeServices.createPromoCode(req.body);
         res.status(201).json(promoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la création du code promo" });
+        return next(error);
     }
 }
 
-async function getPromoCodeById(req, res) {
+async function getPromoCodeById(req, res, next) {
     try {
         const promoCode = await PromoCodeServices.getPromoCodeById(req.params.id);
         if (!promoCode) {
@@ -29,12 +27,11 @@ async function getPromoCodeById(req, res) {
         }
         res.status(200).json(promoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération du code promo" });
+        return next(error);
     }
 }
 
-async function checkPromoCodeValidity(req, res) {
+async function checkPromoCodeValidity(req, res, next) {
     try {
         // const result = await UserPromoCodeServices.checkPromoCodeUsed(req.params.code, req.user.id);
         // if (result.length > 0) {
@@ -46,12 +43,11 @@ async function checkPromoCodeValidity(req, res) {
         }
         return res.status(200).json({ "valid": isValid, "message": "Code promo valide" });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la vérification du code promo" });
+        return next(error);
     }
 }
 
-async function updatePromoCode(req, res) {
+async function updatePromoCode(req, res, next) {
     try {
         const promoCode = await PromoCodeServices.updatePromoCode(req.params.id, req.body);
         if (!promoCode) {
@@ -59,12 +55,11 @@ async function updatePromoCode(req, res) {
         }
         res.status(200).json(promoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la mise à jour du code promo" });
+        return next(error);
     }
 }
 
-async function deletePromoCode(req, res) {
+async function deletePromoCode(req, res, next) {
     try {
         const result = await PromoCodeServices.deletePromoCode(req.params.id);
         if (!result) {
@@ -72,12 +67,11 @@ async function deletePromoCode(req, res) {
         }
         res.status(204).send();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la suppression du code promo" });
+        return next(error);
     }
 }
 
-async function getPromoCodeByCode(req, res) {
+async function getPromoCodeByCode(req, res, next) {
     try {
         const promoCode = await PromoCodeServices.getPromoCodeByCode(req.params.code);
         if (!promoCode) {
@@ -85,8 +79,7 @@ async function getPromoCodeByCode(req, res) {
         }
         res.status(200).json(promoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération du code promo" });
+        return next(error);
     }
 }
 

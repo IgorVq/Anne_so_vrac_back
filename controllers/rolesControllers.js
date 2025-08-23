@@ -1,24 +1,24 @@
 const RolesServices = require('../services/rolesServices');
 
-async function createRole(req, res) {
+async function createRole(req, res, next) {
   try {
     const role = await RolesServices.createRole(req.body);
     res.status(201).json(role);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return next(error);
   }
 }
 
-async function getAllRoles(req, res) {
+async function getAllRoles(req, res, next) {
   try {
     const roles = await RolesServices.getAllRoles();
     res.status(200).json(roles);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return next(error);
   }
 }
 
-async function getRoleById(req, res) {
+async function getRoleById(req, res, next) {
   try {
     const role = await RolesServices.getRoleById(req.params.id);
     if (!role) {
@@ -26,11 +26,11 @@ async function getRoleById(req, res) {
     }
     res.status(200).json(role);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return next(error);
   }
 }
 
-async function updateRole(req, res) {
+async function updateRole(req, res, next) {
   try {
     const role = await RolesServices.updateRole(req.params.id, req.body);
     if (!role) {
@@ -38,11 +38,11 @@ async function updateRole(req, res) {
     }
     res.status(200).json(role);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return next(error);
   }
 }
 
-async function deleteRole(req, res) {
+async function deleteRole(req, res, next) {
   try {
     const result = await RolesServices.deleteRole(req.params.id);
     if (!result) {
@@ -50,11 +50,9 @@ async function deleteRole(req, res) {
     }
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return next(error);
   }
 }
-
-
 
 module.exports = {
     createRole,

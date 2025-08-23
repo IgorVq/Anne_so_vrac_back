@@ -56,8 +56,7 @@ async function updateReservationStatus(req, res) {
         }
         res.status(200).json(updatedReservation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la mise à jour du statut de la réservation" });
+        return next(error);
     }
 }
 
@@ -66,8 +65,7 @@ async function createReservation(req, res) {
         const reservation = await ReservationServices.createReservation(req.body);
         res.status(201).json(reservation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la création de la réservation" });
+        return next(error);
     }
 }
 
@@ -94,8 +92,7 @@ async function applyPromoCode(req, res) {
             return res.status(500).json({ "message": "Erreur lors de la vérification du code promo" });
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de l'application du code promo" });
+        return next(error);
     }
 }
 
@@ -147,8 +144,7 @@ async function confirmPayment(req, res) {
         const deletedCart = await CartServices.deleteCartByUserId(reservation.id_user);
         res.status(200).json({ "message": "Paiement confirmé et réservation mise à jour", reservation: updatedReservation, reservationProducts, deletedCart });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la confirmation du paiement" });
+        return next(error);
     }
 }
 
@@ -160,8 +156,7 @@ async function getMyReservationById(req, res) {
         }
         res.status(200).json(reservation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération de la réservation" });
+        return next(error);
     }
 }
 
@@ -174,8 +169,7 @@ async function getAllReservationsByState(req, res) {
         }
         res.status(200).json(reservations);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération des réservations confirmées" });
+        return next(error);
     }
 }
 
@@ -187,8 +181,7 @@ async function getMyReservations(req, res) {
         }
         res.status(200).json(reservations);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération des réservations" });
+        return next(error);
     }
 }
 
@@ -200,8 +193,7 @@ async function getMyLastReservation(req, res) {
         }
         res.status(200).json(reservation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération de la dernière réservation" });
+        return next(error);
     }
 }
 
@@ -213,8 +205,7 @@ async function getReservationById(req, res) {
         }
         res.status(200).json(reservation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération de la réservation" });
+        return next(error);
     }
 }
 
@@ -226,8 +217,7 @@ async function updateReservation(req, res) {
         }
         res.status(200).json(reservation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la mise à jour de la réservation" });
+        return next(error);
     }
 }
 
@@ -239,8 +229,7 @@ async function deleteReservation(req, res) {
         }
         res.status(204).send();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la suppression de la réservation" });
+        return next(error);
     }
 }
 
@@ -249,8 +238,7 @@ async function removeMyPastReservations(req, res) {
         const result = await ReservationServices.deletePendingReservationByUserId(req.user.id);
         res.status(204).send();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la suppression des réservations passées" });
+        return next(error);
     }
 }
 
@@ -305,8 +293,7 @@ async function createReservationIntent(req, res) {
         const paymentIntent = await ReservationServices.createPaymentIntent(Math.round(reservationData.total_price * 100));
         res.status(201).json({ paymentIntent: paymentIntent, reservation: reservationData });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la création du paiement" });
+        return next(error);
     }
 }
 

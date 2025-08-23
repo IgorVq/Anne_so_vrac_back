@@ -1,24 +1,24 @@
 const InfoMagServices = require('../services/infoMagServices');
 
-async function createInfoMag(req, res) {
+async function createInfoMag(req, res, next) {
     try {
         const infoMag = await InfoMagServices.createInfoMag(req.body);
         res.status(201).json(infoMag);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function getAllInfoMags(req, res) {
+async function getAllInfoMags(req, res, next) {
     try {
         const infoMags = await InfoMagServices.getAllInfoMags();
         res.status(200).json(infoMags);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function getInfoMagById(req, res) {
+async function getInfoMagById(req, res, next) {
     try {
         const infoMag = await InfoMagServices.getInfoMagById(req.params.id);
         if (!infoMag) {
@@ -26,11 +26,11 @@ async function getInfoMagById(req, res) {
         }
         res.status(200).json(infoMag);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function getTopBannerMessages(req, res) {
+async function getTopBannerMessages(req, res, next) {
     try {
         const infoMags = await InfoMagServices.getTopBannerMessages();
         if (!infoMags || infoMags.length === 0) {
@@ -38,11 +38,11 @@ async function getTopBannerMessages(req, res) {
         }
         res.status(200).json(infoMags);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function updateInfoMag(req, res) {
+async function updateInfoMag(req, res, next) {
     try {
         const infoMag = await InfoMagServices.updateInfoMag(req.params.id, req.body);
         if (!infoMag) {
@@ -50,11 +50,11 @@ async function updateInfoMag(req, res) {
         }
         res.status(200).json(infoMag);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function deleteInfoMag(req, res) {
+async function deleteInfoMag(req, res, next) {
     try {
         const result = await InfoMagServices.deleteInfoMag(req.params.id);
         if (!result) {
@@ -62,31 +62,31 @@ async function deleteInfoMag(req, res) {
         }
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
 // Contrôleurs spécifiques pour les messages topbar
-async function getTopbarMessages(req, res) {
+async function getTopbarMessages(req, res, next) {
     try {
         const messages = await InfoMagServices.getTopbarMessages();
         res.status(200).json(messages);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function createTopbarMessage(req, res) {
+async function createTopbarMessage(req, res, next) {
     try {
         const messageData = { ...req.body, display: 'topbar' };
         const message = await InfoMagServices.createInfoMag(messageData);
         res.status(201).json(message);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function updateTopbarMessage(req, res) {
+async function updateTopbarMessage(req, res, next) {
     try {
         const messageData = { ...req.body, display: 'topbar' };
         const message = await InfoMagServices.updateInfoMag(req.params.id, messageData);
@@ -95,11 +95,11 @@ async function updateTopbarMessage(req, res) {
         }
         res.status(200).json(message);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function deleteTopbarMessage(req, res) {
+async function deleteTopbarMessage(req, res, next) {
     try {
         const result = await InfoMagServices.deleteInfoMag(req.params.id);
         if (!result) {
@@ -107,7 +107,7 @@ async function deleteTopbarMessage(req, res) {
         }
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 

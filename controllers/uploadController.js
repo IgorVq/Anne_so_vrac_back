@@ -6,7 +6,7 @@ const uploadFile = (req, res) => {
         const fileName = uploadService.saveUpload(req.file);
         res.status(200).json({ message: 'Fichier reçu', path: `/upload/${fileName}` });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        return next(error);
     }
 };
 
@@ -20,7 +20,7 @@ const deleteFile = (req, res) => {
         uploadService.deleteUpload(req.params.name);
         res.status(200).json({ message: 'Fichier supprimé' });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la suppression du fichier' });
+        return next(error);
     }
 };
 

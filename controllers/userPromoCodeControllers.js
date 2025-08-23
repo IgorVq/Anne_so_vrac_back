@@ -1,26 +1,24 @@
 const UserPromoCodeServices = require('../services/userPromoCodeServices');
 
-async function getAllUserPromoCodes(req, res) {
+async function getAllUserPromoCodes(req, res, next) {
     try {
         const userPromoCodes = await UserPromoCodeServices.getAllUserPromoCodes();
         res.status(200).json(userPromoCodes);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération des codes promo utilisateurs" });
+        return next(error);
     }
 }
 
-async function createUserPromoCode(req, res) {
+async function createUserPromoCode(req, res, next) {
     try {
         const userPromoCode = await UserPromoCodeServices.createUserPromoCode(req.body);
         res.status(201).json(userPromoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la création du code promo utilisateur" });
+        return next(error);
     }
 }
 
-async function getUserPromoCodeById(req, res) {
+async function getUserPromoCodeById(req, res, next) {
     try {
         const userPromoCode = await UserPromoCodeServices.getUserPromoCodeById(req.params.id);
         if (!userPromoCode) {
@@ -28,12 +26,11 @@ async function getUserPromoCodeById(req, res) {
         }
         res.status(200).json(userPromoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération du code promo utilisateur" });
+        return next(error);
     }
 }
 
-async function updateUserPromoCode(req, res) {
+async function updateUserPromoCode(req, res, next) {
     try {
         const userPromoCode = await UserPromoCodeServices.updateUserPromoCode(req.params.id, req.body);
         if (!userPromoCode) {
@@ -41,12 +38,11 @@ async function updateUserPromoCode(req, res) {
         }
         res.status(200).json(userPromoCode);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la mise à jour du code promo utilisateur" });
+        return next(error);
     }
 }
 
-async function deleteUserPromoCode(req, res) {
+async function deleteUserPromoCode(req, res, next) {
     try {
         const result = await UserPromoCodeServices.deleteUserPromoCode(req.params.id);
         if (!result) {
@@ -54,8 +50,7 @@ async function deleteUserPromoCode(req, res) {
         }
         res.status(204).send();
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la suppression du code promo utilisateur" });
+        return next(error);
     }
 }
 

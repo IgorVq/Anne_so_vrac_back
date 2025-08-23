@@ -4,31 +4,27 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const transporter = require('../config/nodemailer');
 
-async function getAllUsers(req, res) {
+async function getAllUsers(req, res, next) {
     try {
         const clients = await UsersServices.getAllUsers();
         res.status(200);
         res.json(clients);
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de la récupération des clients" });
+        return next(error);
     }
 }
 
-async function createUser(req, res) {
+async function createUser(req, res, next) {
     try {
         const client = await UsersServices.createUser(req.body);
         res.status(201);
         res.json(client);
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de la création du client" });
+        return next(error);
     }
 }
 
-async function contactMail(req, res) {
+async function contactMail(req, res, next) {
     try {
         await transporter.sendMail({
             from: 'VERQUAIN Igor <igor.verquain@gmail.com>',
@@ -67,13 +63,11 @@ async function contactMail(req, res) {
         });
         res.status(200).json({ message: 'Email de reintialisation envoyé' });
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de l'envoie du mail'" });
+        return next(error);
     }
 }
 
-async function getUserById(req, res) {
+async function getUserById(req, res, next) {
     try {
         const client = await UsersServices.getUserById(req.params.id);
         if (!client) {
@@ -84,13 +78,11 @@ async function getUserById(req, res) {
         res.status(200);
         res.json(client);
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de la récupération du client" });
+        return next(error);
     }
 }
 
-async function getMe(req, res) {
+async function getMe(req, res, next) {
     try {
         const userId = req.user.id;
         const client = await UsersServices.getUserInfoById(userId);
@@ -99,12 +91,11 @@ async function getMe(req, res) {
         }
         res.status(200).json(client);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la récupération du client" });
+        return next(error);
     }
 }
 
-async function updateMe(req, res) {
+async function updateMe(req, res, next) {
     try {
         const userId = req.user.id;
         const client = await UsersServices.updateUserInfoById(userId, req.body);
@@ -113,12 +104,11 @@ async function updateMe(req, res) {
         }
         res.status(200).json(client);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ "message": "Une erreur est survenue lors de la mise à jour du client" });
+        return next(error);
     }
 }
 
-async function getUserByEmail(req, res) {
+async function getUserByEmail(req, res, next) {
     try {
         const client = await UsersServices.getUserByEmail(req.params.email);
         if (!client) {
@@ -127,32 +117,26 @@ async function getUserByEmail(req, res) {
         res.status(200);
         res.json(client);
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de la récupération du client par email" });
+        return next(error);
     }
 }
 
-async function updateUser(req, res) {
+async function updateUser(req, res, next) {
     try {
         const client = await UsersServices.updateUser(req.params.id, req.body);
         res.status(200);
         res.json(client);
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de la mise à jour du client" });
+        return next(error);
     }
 }
 
-async function deleteUser(req, res) {
+async function deleteUser(req, res, next) {
     try {
         await UsersServices.deleteUser(req.params.id);
         res.status(204).send();
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        res.json({ "message": "Une erreur est survenue lors de la suppression du client" });
+        return next(error);
     }
 }
 

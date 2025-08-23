@@ -1,24 +1,24 @@
 const ReservationProductsServices = require('../services/reservationProductsServices');
 
-async function createReservationProduct(req, res) {
+async function createReservationProduct(req, res, next) {
     try {
         const reservationProduct = await ReservationProductsServices.createReservationProduct(req.body);
         res.status(201).json(reservationProduct);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function getAllReservationProducts(req, res) {
+async function getAllReservationProducts(req, res, next) {
     try {
         const reservationProducts = await ReservationProductsServices.getAllReservationProducts();
         res.status(200).json(reservationProducts);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function getReservationProductById(req, res) {
+async function getReservationProductById(req, res, next) {
     try {
         const { id_reservation, id_product, id_product_size } = req.params;
         const reservationProduct = await ReservationProductsServices.getReservationProductById(
@@ -31,11 +31,11 @@ async function getReservationProductById(req, res) {
         }
         res.status(200).json(reservationProduct);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function getAllReservationProductsByReservationId(req, res) {
+async function getAllReservationProductsByReservationId(req, res, next) {
     try {
         const { id_reservation } = req.params;
         const reservationProducts = await ReservationProductsServices.getAllReservationProductsByReservationId(id_reservation);
@@ -44,11 +44,11 @@ async function getAllReservationProductsByReservationId(req, res) {
         }
         res.status(200).json(reservationProducts);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function updateReservationProduct(req, res) {
+async function updateReservationProduct(req, res, next) {
     try {
         const { id_reservation, id_product, id_product_size } = req.params;
         const reservationProduct = await ReservationProductsServices.updateReservationProduct(
@@ -62,11 +62,11 @@ async function updateReservationProduct(req, res) {
         }
         res.status(200).json(reservationProduct);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
-async function deleteReservationProduct(req, res) {
+async function deleteReservationProduct(req, res, next) {
     try {
         const { id_reservation, id_product, id_product_size } = req.params;
         const result = await ReservationProductsServices.deleteReservationProduct(
@@ -79,7 +79,7 @@ async function deleteReservationProduct(req, res) {
         }
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return next(error);
     }
 }
 
@@ -87,7 +87,7 @@ module.exports = {
     createReservationProduct,
     getAllReservationProducts,
     getReservationProductById,
+    getAllReservationProductsByReservationId,
     updateReservationProduct,
-    deleteReservationProduct,
-    getAllReservationProductsByReservationId
+    deleteReservationProduct
 };
