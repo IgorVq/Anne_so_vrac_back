@@ -6,25 +6,8 @@ async function getAllCredentials() {
 }
 
 async function createCredential(credential) {
-    try {
-        // Vérifier les champs requis
-        if (!credential.password || !credential.email || !credential.phone) {
-            throw new Error('Les champs password, email et phone sont requis');
-        }
-
-        const results = await p.query('INSERT INTO Credentials SET ?', [credential]);
-        return getCredentialById(results[0].insertId);
-    } catch (error) {
-        if (error.code === 'ER_DUP_ENTRY') {
-            if (error.message.includes('email')) {
-                throw new Error('Cet email est déjà utilisé');
-            }
-            if (error.message.includes('phone')) {
-                throw new Error('Ce numéro de téléphone est déjà utilisé');
-            }
-        }
-        throw error;
-    }
+    const results = await p.query('INSERT INTO Credentials SET ?', [credential]);
+    return getCredentialById(results[0].insertId);
 }
 
 async function getCredentialById(id) {
@@ -33,20 +16,8 @@ async function getCredentialById(id) {
 }
 
 async function updateCredential(id, credential) {
-    try {
-        await p.query('UPDATE Credentials SET ? WHERE id_credential = ?', [credential, id]);
-        return getCredentialById(id);
-    } catch (error) {
-        if (error.code === 'ER_DUP_ENTRY') {
-            if (error.message.includes('email')) {
-                throw new Error('Cet email est déjà utilisé');
-            }
-            if (error.message.includes('phone')) {
-                throw new Error('Ce numéro de téléphone est déjà utilisé');
-            }
-        }
-        throw error;
-    }
+    await p.query('UPDATE Credentials SET ? WHERE id_credential = ?', [credential, id]);
+    return getCredentialById(id);
 }
 
 async function deleteCredential(id) {

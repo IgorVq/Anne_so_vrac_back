@@ -23,7 +23,6 @@ const promoCodeRoutes = require('../routes/promoCodeRoutes');
 const reservationProductsRoutes = require('../routes/reservationProductsRoutes');
 const reservationRoutes = require('../routes/reservationRoutes');
 const rolesRoutes = require('../routes/rolesRoutes');
-const userPromoCodeRoutes = require('../routes/userPromoCodeRoutes');
 
 const app = express();
 app.use(cors());
@@ -47,7 +46,6 @@ app.use('/promoCode', promoCodeRoutes);
 app.use('/reservationProducts', reservationProductsRoutes);
 app.use('/reservation', reservationRoutes);
 app.use('/roles', rolesRoutes);
-app.use('/userPromoCode', userPromoCodeRoutes);
 
 app.use(errorHandler);
 

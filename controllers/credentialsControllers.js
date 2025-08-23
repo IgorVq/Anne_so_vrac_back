@@ -13,8 +13,6 @@ async function getAllCredentials(_req, res, next) {
 async function createCredential(req, res, next) {
   try {
     const { password, email, phone } = req.body;
-
-    // Validation centralisée
     if (!password || !email || !phone) {
       return next({
         status: 400,
@@ -22,12 +20,10 @@ async function createCredential(req, res, next) {
         message: 'Les champs password, email et phone sont requis',
       });
     }
-
     const credential = await CredentialsServices.createCredential(req.body);
     return res.status(201).json(credential);
   } catch (error) {
-    // Laisse le middleware mapper (DUPLICATE, NOT_NULL, etc.)
-    return next(error);
+    return next(error); // 1062 -> DUPLICATE (mapper)
   }
 }
 
@@ -35,11 +31,7 @@ async function getCredentialById(req, res, next) {
   try {
     const credential = await CredentialsServices.getCredentialById(req.params.id);
     if (!credential) {
-      return next({
-        status: 404,
-        code: 'NOT_FOUND',
-        message: 'Identifiant non trouvé',
-      });
+      return next({ status: 404, code: 'NOT_FOUND', message: 'Identifiant non trouvé' });
     }
     return res.status(200).json(credential);
   } catch (error) {
@@ -51,29 +43,21 @@ async function updateCredential(req, res, next) {
   try {
     const credential = await CredentialsServices.updateCredential(req.params.id, req.body);
     if (!credential) {
-      return next({
-        status: 404,
-        code: 'NOT_FOUND',
-        message: 'Identifiant non trouvé',
-      });
+      return next({ status: 404, code: 'NOT_FOUND', message: 'Identifiant non trouvé' });
     }
-    return res.status(200).json(credential); // ou 204 si tu préfères
+    return res.status(200).json(credential);
   } catch (error) {
-    return next(error);
+    return next(error); // 1062 -> DUPLICATE (mapper)
   }
 }
 
 async function deleteCredential(req, res, next) {
   try {
-    const result = await CredentialsServices.deleteCredential(req.params.id);
-    if (!result) {
-      return next({
-        status: 404,
-        code: 'NOT_FOUND',
-        message: 'Identifiant non trouvé',
-      });
+    const ok = await CredentialsServices.deleteCredential(req.params.id);
+    if (!ok) {
+      return next({ status: 404, code: 'NOT_FOUND', message: 'Identifiant non trouvé' });
     }
-    return res.status(204).send();
+    return res.status(204).end();
   } catch (error) {
     return next(error);
   }
