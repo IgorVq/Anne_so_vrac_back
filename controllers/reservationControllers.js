@@ -81,11 +81,10 @@ async function applyPromoCode(req, res, next) {
     if (!req.body.promoCode) {
       return next({ status: 400, code: 'VALIDATION', message: 'Aucun code promo fourni' });
     }
-
-    const promoCodeData = await PromoCodeServices.checkPromoCodeIsValid(req.body.promoCode);
+    const promoCodeData = await PromoCodeServices.checkPromoCodeIsValid(req.body.promoCode, req.user.id);
     if (!promoCodeData) {
       // comportement existant : 200 avec message informatif
-      return res.status(200).json({ message: 'Code promo invalide ou expiré' });
+      return res.status(200).json({ message: 'Code promo invalide ou déjà utilisé' });
     }
 
     const updatedReservation = await ReservationServices.updateReservation(

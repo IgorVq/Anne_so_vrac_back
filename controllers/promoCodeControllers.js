@@ -61,6 +61,8 @@ async function deletePromoCode(req, res, next) {
 
 async function checkPromoCodeValidity(req, res, next) {
     try {
+        const userId = req.user.id_user;
+        console.log("User ID from token:", userId); // Debug line to check user ID
         const isValid = await PromoCodeServices.checkPromoCodeIsValid(req.params.code);
         if (!isValid) {
             return next({ status: 200, code: 'INVALID', message: 'Code promo invalide ou expiré' });

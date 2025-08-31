@@ -20,8 +20,23 @@ async function getPromoCodeByCode(code) {
     return results[0][0];
 }
 
-async function checkPromoCodeIsValid(code) {
-    const results = await p.query('SELECT * FROM promo_code WHERE code = ? and is_active = 1 and valid_from <= NOW() and valid_to >= NOW()', [code]);
+async function checkPromoCodeIsValid(code, id_user) {
+    const results = await p.query(
+  `SELECT p.*
+   FROM promo_code p
+   WHERE p.code = ?
+     AND p.is_active = 1
+     AND p.valid_from <= NOW()
+     AND p.valid_to   >= NOW()
+     AND NOT EXISTS (
+       SELECT 1
+       FROM reservation r
+       WHERE r.id_promo_code = p.id_promo_code
+         AND r.id_user = ?
+         AND r.status IN ('withdrawn','available','confirmed')
+     )`,
+  [code, id_user]
+);
     return results[0][0];
 }
 
