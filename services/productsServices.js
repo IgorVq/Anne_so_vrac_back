@@ -71,7 +71,6 @@ async function deleteProduct(id) {
     return result[0].affectedRows > 0;
 }
 
-// ===== NOUVELLES MÉTHODES ADMIN =====
 
 async function getAllProductsForAdmin() {
     const query = `
@@ -88,9 +87,7 @@ async function getAllProductsForAdmin() {
     
     const [products] = await p.query(query);
     
-    // Pour chaque produit, récupérer ses relations
     for (let product of products) {
-        // Récupérer les formats actifs seulement
         const [formats] = await p.query(`
             SELECT 
                 ps.id_product_size,
@@ -103,7 +100,6 @@ async function getAllProductsForAdmin() {
             ORDER BY f.default_selected DESC, ps.id_product_size
         `, [product.id_product]);
         
-        // Récupérer les images
         const [images] = await p.query(`
             SELECT 
                 i.id_image,
@@ -115,7 +111,6 @@ async function getAllProductsForAdmin() {
             ORDER BY pi.order_nb
         `, [product.id_product]);
         
-        // Récupérer les discounts
         const [discounts] = await p.query(`
             SELECT 
                 id_discount,
@@ -124,7 +119,6 @@ async function getAllProductsForAdmin() {
             WHERE id_product = ?
         `, [product.id_product]);
         
-        // Structurer la catégorie
         product.category = product.category_id ? {
             id_category: product.category_id,
             category_name: product.category_name,
@@ -132,13 +126,11 @@ async function getAllProductsForAdmin() {
             visible: product.category_visible
         } : null;
         
-        // Nettoyer les champs temporaires
         delete product.category_id;
         delete product.category_name;
         delete product.category_description;
         delete product.category_visible;
         
-        // Ajouter les relations
         product.formats = formats;
         product.images = images;
         product.discounts = discounts;
@@ -168,7 +160,6 @@ async function getProductForAdmin(id) {
     
     const product = products[0];
     
-    // Récupérer les formats actifs seulement
     const [formats] = await p.query(`
         SELECT 
             ps.id_product_size,
@@ -181,7 +172,6 @@ async function getProductForAdmin(id) {
         ORDER BY f.default_selected DESC, ps.id_product_size
     `, [id]);
     
-    // Récupérer les images
     const [images] = await p.query(`
         SELECT 
             i.id_image,
@@ -193,7 +183,6 @@ async function getProductForAdmin(id) {
         ORDER BY pi.order_nb
     `, [id]);
     
-    // Récupérer les discounts
     const [discounts] = await p.query(`
         SELECT 
             id_discount,
@@ -202,7 +191,6 @@ async function getProductForAdmin(id) {
         WHERE id_product = ?
     `, [id]);
     
-    // Structurer la catégorie
     product.category = product.category_id ? {
         id_category: product.category_id,
         category_name: product.category_name,
@@ -210,13 +198,11 @@ async function getProductForAdmin(id) {
         visible: product.category_visible
     } : null;
     
-    // Nettoyer les champs temporaires
     delete product.category_id;
     delete product.category_name;
     delete product.category_description;
     delete product.category_visible;
     
-    // Ajouter les relations
     product.formats = formats;
     product.images = images;
     product.discounts = discounts;
@@ -230,7 +216,6 @@ async function createProductAdmin(productData) {
     try {
         await connection.beginTransaction();
         
-        // 1. Créer le produit principal
         const productFields = {
             product_name: productData.product_name,
             short_description: productData.short_description || '',
@@ -250,18 +235,15 @@ async function createProductAdmin(productData) {
         const [productResult] = await connection.query('INSERT INTO products SET ?', [productFields]);
         const productId = productResult.insertId;
         
-        // 2. Créer les formats si fournis
         if (productData.formats && productData.formats.length > 0) {
             for (let i = 0; i < productData.formats.length; i++) {
                 const format = productData.formats[i];
                 
-                // Créer l'entrée dans product_sizes
                 const [sizeResult] = await connection.query(
                     'INSERT INTO product_sizes (size, type) VALUES (?, ?)',
                     [format.size, format.type]
                 );
                 
-                // Créer l'entrée dans format
                 await connection.query(
                     'INSERT INTO format (id_product, id_product_size, default_selected) VALUES (?, ?, ?)',
                     [productId, sizeResult.insertId, format.default_selected || (i === 0 ? 1 : 0)]
@@ -269,16 +251,13 @@ async function createProductAdmin(productData) {
             }
         }
         
-        // 3. Créer les images si fournies
         if (productData.images && productData.images.length > 0) {
             for (const imageData of productData.images) {
-                // Créer l'entrée dans images
                 const [imageResult] = await connection.query(
                     'INSERT INTO images (image_url) VALUES (?)',
                     [imageData.image_url]
                 );
                 
-                // Créer l'entrée dans product_image
                 await connection.query(
                     'INSERT INTO product_image (id_product, id_image, order_nb) VALUES (?, ?, ?)',
                     [productId, imageResult.insertId, imageData.order_nb]
@@ -286,7 +265,6 @@ async function createProductAdmin(productData) {
             }
         }
         
-        // 4. Créer les discounts si fournis
         if (productData.discounts && productData.discounts.length > 0) {
             for (const discount of productData.discounts) {
                 await connection.query(
@@ -298,7 +276,6 @@ async function createProductAdmin(productData) {
         
         await connection.commit();
         
-        // Retourner le produit complet créé
         return await getProductForAdmin(productId);
         
     } catch (error) {
@@ -313,7 +290,6 @@ async function updateProductAdmin(id, productData) {
   try {
     await connection.beginTransaction();
 
-    // 1) Mettre à jour uniquement les champs présents dans productData
     const allowed = [
       'product_name', 'short_description', 'description', 'price', 'local_product',
       'visible', 'allergen', 'composition', 'additive', 'id_category', 'origin',
@@ -322,16 +298,14 @@ async function updateProductAdmin(id, productData) {
     const productFields = {};
     for (const k of allowed) {
       if (Object.prototype.hasOwnProperty.call(productData, k)) {
-        productFields[k] = productData[k]; // conserve null si explicitement envoyé
+        productFields[k] = productData[k];
       }
     }
     if (Object.keys(productFields).length > 0) {
       await connection.query('UPDATE `products` SET ? WHERE id_product = ?', [productFields, id]);
     }
 
-    // 2) Gestion "intelligente" des formats (ne toucher que si formats est fourni)
     if (productData.formats !== undefined) {
-      // Récupérer les formats existants
       const [existingFormats] = await connection.query(`
         SELECT 
           f.id_product,
@@ -347,7 +321,6 @@ async function updateProductAdmin(id, productData) {
 
       const newFormats = productData.formats || [];
 
-      // Comparaison simple
       const formatsChanged =
         existingFormats.length !== newFormats.length ||
         existingFormats.some((existing, index) => {
@@ -356,17 +329,14 @@ async function updateProductAdmin(id, productData) {
         });
 
       if (formatsChanged) {
-        // "Soft delete" des anciennes tailles
         const oldProductSizeIds = existingFormats.map(f => f.id_product_size);
         for (const sizeId of oldProductSizeIds) {
           await connection.query('UPDATE `product_sizes` SET `active` = 0 WHERE `id_product_size` = ?', [sizeId]);
         }
 
-        // Créer/réactiver les nouvelles tailles + lier via format
         for (let i = 0; i < newFormats.length; i++) {
           const f = newFormats[i];
 
-          // Existe déjà ?
           const [existingSize] = await connection.query(
             'SELECT `id_product_size` FROM `product_sizes` WHERE `size` = ? AND `type` = ?',
             [f.size, f.type]
@@ -384,7 +354,6 @@ async function updateProductAdmin(id, productData) {
             sizeId = sizeResult.insertId;
           }
 
-          // Lien format : update si existe, sinon insert
           const [existingFormat] = await connection.query(
             'SELECT `id_product`, `id_product_size` FROM `format` WHERE `id_product` = ? AND `id_product_size` = ?',
             [id, sizeId]
@@ -405,11 +374,9 @@ async function updateProductAdmin(id, productData) {
           }
         }
       } else {
-        // Rien à faire
       }
     }
 
-    // 3) Images (ne toucher que si images est fourni)
     if (productData.images !== undefined) {
       const [existingImages] = await connection.query(`
         SELECT 
@@ -432,14 +399,11 @@ async function updateProductAdmin(id, productData) {
         });
 
       if (imagesChanged) {
-        // Supprimer anciennes relations
         await connection.query('DELETE FROM `product_image` WHERE `id_product` = ?', [id]);
-        // Supprimer anciennes images
         const oldImageIds = existingImages.map(img => img.id_image);
         for (const imageId of oldImageIds) {
           await connection.query('DELETE FROM `images` WHERE `id_image` = ?', [imageId]);
         }
-        // Créer les nouvelles
         for (const img of newImages) {
           const [imgRes] = await connection.query(
             'INSERT INTO `images` (`image_url`) VALUES (?)',
@@ -451,11 +415,9 @@ async function updateProductAdmin(id, productData) {
           );
         }
       } else {
-        // Rien à faire
       }
     }
 
-    // 4) Discounts (ne toucher que si discounts est fourni)
     if (productData.discounts !== undefined) {
       await connection.query('DELETE FROM `discounts` WHERE `id_product` = ?', [id]);
       for (const d of (productData.discounts || [])) {
@@ -481,26 +443,21 @@ async function deleteProductAdmin(id) {
     try {
         await connection.beginTransaction();
         
-        // 1. Récupérer les IDs des ressources liées pour les supprimer
         const [formats] = await connection.query('SELECT id_product_size FROM format WHERE id_product = ?', [id]);
         const [images] = await connection.query('SELECT id_image FROM product_image WHERE id_product = ?', [id]);
         
-        // 2. Supprimer les discounts
         await connection.query('DELETE FROM discounts WHERE id_product = ?', [id]);
         
-        // 3. Supprimer les relations et images
         await connection.query('DELETE FROM product_image WHERE id_product = ?', [id]);
         for (const image of images) {
             await connection.query('DELETE FROM images WHERE id_image = ?', [image.id_image]);
         }
         
-        // 4. Supprimer les formats
         await connection.query('DELETE FROM format WHERE id_product = ?', [id]);
         for (const format of formats) {
             await connection.query('DELETE FROM product_sizes WHERE id_product_size = ?', [format.id_product_size]);
         }
         
-        // 5. Supprimer le produit
         const [result] = await connection.query('DELETE FROM products WHERE id_product = ?', [id]);
         
         await connection.commit();
@@ -524,7 +481,6 @@ module.exports = {
     getAvailablePromoProductsId,
     getAvailableLocalProductsId,
     getAvailableProductsByCategoryId,
-    // Nouvelles méthodes admin
     getAllProductsForAdmin,
     getProductForAdmin,
     createProductAdmin,

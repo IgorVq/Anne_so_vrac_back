@@ -1,4 +1,3 @@
-// controllers/promoCodeControllers.js
 const PromoCodeServices = require('../services/promoCodeServices');
 
 async function getAllPromoCodes(_req, res, next) {
@@ -19,7 +18,7 @@ async function createPromoCode(req, res, next) {
     const created = await PromoCodeServices.createPromoCode(req.body);
     return res.status(201).json(created);
   } catch (error) {
-    return next(error); // 1062 -> DUPLICATE (mapper)
+    return next(error);
   }
 }
 
@@ -62,7 +61,7 @@ async function deletePromoCode(req, res, next) {
 async function checkPromoCodeValidity(req, res, next) {
     try {
         const userId = req.user.id_user;
-        console.log("User ID from token:", userId); // Debug line to check user ID
+        console.log("User ID from token:", userId);
         const isValid = await PromoCodeServices.checkPromoCodeIsValid(req.params.code);
         if (!isValid) {
             return next({ status: 200, code: 'INVALID', message: 'Code promo invalide ou expiré' });

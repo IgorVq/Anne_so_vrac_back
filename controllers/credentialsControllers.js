@@ -1,4 +1,3 @@
-// controllers/credentialsControllers.js
 const CredentialsServices = require('../services/credentialsServices');
 
 async function getAllCredentials(_req, res, next) {
@@ -23,7 +22,7 @@ async function createCredential(req, res, next) {
     const credential = await CredentialsServices.createCredential(req.body);
     return res.status(201).json(credential);
   } catch (error) {
-    return next(error); // 1062 -> DUPLICATE (mapper)
+    return next(error);
   }
 }
 
@@ -47,7 +46,7 @@ async function updateCredential(req, res, next) {
     }
     return res.status(200).json(credential);
   } catch (error) {
-    return next(error); // 1062 -> DUPLICATE (mapper)
+    return next(error);
   }
 }
 

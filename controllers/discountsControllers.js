@@ -1,4 +1,3 @@
-// controllers/discountsControllers.js
 const DiscountsServices = require('../services/discountsServices');
 
 async function createDiscount(req, res, next) {

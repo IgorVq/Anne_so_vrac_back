@@ -11,7 +11,6 @@ jest.mock('../../controllers/authControllers', () => {
   };
 });
 
-// Optionnel: mute les erreurs pour une sortie propre
 let errSpy;
 beforeAll(() => { errSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); });
 afterAll(() => { errSpy.mockRestore(); });
@@ -23,8 +22,8 @@ const makeBadProduct = (o = {}) => ({
   price: 3.20,
   local_product: 0,
   visible: 1,
-  id_category: global.seed.categoryId, // FK valide
-  formats: [{ size: 500, type: null }], // ❌ NOT NULL -> doit trigger 400
+  id_category: global.seed.categoryId,
+  formats: [{ size: 500, type: null }],
   ...o,
 });
 
@@ -38,7 +37,6 @@ describe('🧪 POST /products/admin – rollback', () => {
       error: 'Valeur requise manquante',
     });
 
-    // Transaction rollback : rien en DB
     const [rows] = await p.query(
       'SELECT * FROM `products` WHERE product_name = ?',
       ['Riz basmati']

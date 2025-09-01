@@ -5,7 +5,6 @@ const AuthController = require('../controllers/authControllers');
 
 router.post('/', AuthController.verifyToken, AuthController.requireAdmin, ReservationController.createReservation);
 router.post('/create', AuthController.verifyToken, ReservationController.createReservationIntent);
-// router.post('/create-payment-intent', AuthController.verifyToken, ReservationController.createPaymentIntent);
 router.post('/apply-promo-code', AuthController.verifyToken, ReservationController.applyPromoCode);
 router.post('/confirm-payment', AuthController.verifyToken, ReservationController.confirmPayment);
 router.get('/all/state/:state', ReservationController.getAllReservationsByState);

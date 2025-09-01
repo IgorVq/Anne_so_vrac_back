@@ -1,13 +1,8 @@
-// utils/sqlErrorMapper.js
-
 function keyFromSqlMessage(sqlMessage = '') {
-  // Exemples MySQL :
-  //  - "Duplicate entry '...' for key 'credentials.email'"
-  //  - "Duplicate entry '...' for key 'email'"
   const m = sqlMessage.match(/for key '([^']+)'/i);
   if (!m) return null;
   const key = m[1];
-  return key.includes('.') ? key.split('.').pop() : key; // "credentials.email" -> "email"
+  return key.includes('.') ? key.split('.').pop() : key;
 }
 
 function mapMysqlError(err = {}) {
@@ -15,7 +10,6 @@ function mapMysqlError(err = {}) {
   const errno = err.errno;
   const sqlMessage = err.sqlMessage || '';
 
-  // --- Erreurs déjà formées (ex: next({ status, code, message })) ---
   if (!sqlMessage && (err.status || err.code || err.message)) {
     return {
       status: err.status || 500,
@@ -26,7 +20,6 @@ function mapMysqlError(err = {}) {
     };
   }
 
-  // --- DUPLICATE / UNIQUE ---
   if (code === 'ER_DUP_ENTRY' || errno === 1062) {
     const key = keyFromSqlMessage(sqlMessage);
 
@@ -50,7 +43,6 @@ function mapMysqlError(err = {}) {
     };
   }
 
-  // --- FK cassée (insert/update parent manquant OU delete parent référencé) ---
   if (
     code === 'ER_NO_REFERENCED_ROW_2' ||
     code === 'ER_ROW_IS_REFERENCED_2' ||
@@ -64,7 +56,6 @@ function mapMysqlError(err = {}) {
     };
   }
 
-  // --- NOT NULL (champ requis manquant) ---
   if (code === 'ER_BAD_NULL_ERROR' || errno === 1048) {
     return {
       status: 400,
@@ -74,7 +65,6 @@ function mapMysqlError(err = {}) {
     };
   }
 
-  // --- Donnée trop longue (optionnel) ---
   if (code === 'ER_DATA_TOO_LONG' || errno === 1406) {
     return {
       status: 400,
@@ -84,7 +74,6 @@ function mapMysqlError(err = {}) {
     };
   }
 
-  // --- défaut ---
   return {
     status: 500,
     code: 'INTERNAL',

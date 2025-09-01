@@ -11,14 +11,12 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  // 🔧 Utilise p (Connection en mode promise), pas getConnection()
   await p.query('SET FOREIGN_KEY_CHECKS=0');
   for (const t of TABLES) {
     await p.query(`TRUNCATE TABLE \`${t}\``);
   }
   await p.query('SET FOREIGN_KEY_CHECKS=1');
 
-  // Seeds minimaux
   const [rRes] = await p.query('INSERT INTO roles (admin) VALUES (0)');
   const roleId = rRes.insertId;
 
@@ -50,5 +48,5 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await p.end(); // ok avec mysql2 en mode promise
+  await p.end();
 });

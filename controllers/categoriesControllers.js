@@ -1,4 +1,3 @@
-// controllers/categoriesControllers.js
 const CategoriesServices = require('../services/categoriesServices');
 
 async function getAllCategories(_req, res, next) {
@@ -19,7 +18,7 @@ async function createCategory(req, res, next) {
     const created = await CategoriesServices.createCategory(req.body);
     return res.status(201).json(created);
   } catch (error) {
-    return next(error); // 1062 -> DUPLICATE
+    return next(error);
   }
 }
 
@@ -52,7 +51,7 @@ async function deleteCategory(req, res, next) {
     await CategoriesServices.deleteCategory(req.params.id);
     return res.status(204).end();
   } catch (error) {
-    return next(error); // 1451 -> FK_CONSTRAINT
+    return next(error);
   }
 }
 

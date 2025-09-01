@@ -11,7 +11,6 @@ let errSpy;
 beforeAll(() => { errSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); });
 afterAll(() => { errSpy.mockRestore(); });
 
-// Helper: crée un produit + 1 size + lien format
 async function createProductWithFormat() {
   const [prod] = await p.query(
     'INSERT INTO `products` (product_name, short_description, description, price, local_product, visible, id_category) VALUES (?,?,?,?,?,?,?)',

@@ -8,7 +8,6 @@ router.get('/', InfoMagController.getAllInfoMags);
 router.get('/:id', InfoMagController.getInfoMagById);
 router.get('/topBanner', InfoMagController.getTopBannerMessages);
 
-// Routes spécifiques pour les messages topbar
 router.get('/topbar/messages', InfoMagController.getTopbarMessages);
 router.post('/topbar', AuthController.verifyToken, AuthController.requireAdmin, InfoMagController.createTopbarMessage);
 router.patch('/topbar/:id', AuthController.verifyToken, AuthController.requireAdmin, InfoMagController.updateTopbarMessage);

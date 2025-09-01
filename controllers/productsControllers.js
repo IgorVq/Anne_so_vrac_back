@@ -1,7 +1,5 @@
-// controllers/productsControllers.js
 const ProductsServices = require('../services/productsServices');
 
-// ===== PUBLIC =====
 async function createProduct(req, res, next) {
   try {
     const product = await ProductsServices.createProduct(req.body);
@@ -56,7 +54,6 @@ async function deleteProduct(req, res, next) {
   }
 }
 
-// ===== Cartes / filtres =====
 async function getAvailableProductsId(_req, res, next) {
   try {
     const data = await ProductsServices.getAvailableProductsId();
@@ -105,7 +102,6 @@ async function getProductCardInfoById(req, res, next) {
   }
 }
 
-// ===== ADMIN =====
 async function getAllProductsForAdmin(_req, res, next) {
   try {
     const data = await ProductsServices.getAllProductsForAdmin();
@@ -158,7 +154,6 @@ async function deleteProductAdmin(req, res, next) {
 }
 
 module.exports = {
-  // public
   createProduct,
   getAllProducts,
   getProductById,
@@ -169,7 +164,6 @@ module.exports = {
   getAvailableLocalProductsId,
   getAvailableProductsByCategoryId,
   getProductCardInfoById,
-  // admin
   getAllProductsForAdmin,
   getProductForAdmin,
   createProductAdmin,

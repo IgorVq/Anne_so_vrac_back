@@ -16,7 +16,7 @@ describe('🔐 /credentials CRUD', () => {
     const res = await request(app).post('/credentials').send({
       email: 'john.doe@test.dev',
       phone: '0600000001',
-      password: 'Secret!123' // que tu hash côté service
+      password: 'Secret!123'
     });
     expect([200,201]).toContain(res.statusCode);
 
@@ -47,7 +47,6 @@ describe('🔐 /credentials CRUD', () => {
   });
 
   test('DELETE (référencé par user) → 409 | FK_CONSTRAINT', async () => {
-    // créer cred + role + user lié
     const [c] = await p.query('INSERT INTO `credentials` (email, phone, password) VALUES (?,?,?)',
       ['link@test.dev', '0600000011', 'x']);
     const credId = c.insertId;

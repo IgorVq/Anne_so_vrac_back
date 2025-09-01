@@ -1,4 +1,3 @@
-// controllers/uploadController.js
 const uploadService = require('../services/uploadServices');
 const path = require('path');
 

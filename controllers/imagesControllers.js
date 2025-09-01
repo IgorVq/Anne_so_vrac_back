@@ -1,4 +1,3 @@
-// controllers/imagesControllers.js
 const ImagesServices = require('../services/imagesServices');
 
 async function createImage(req, res, next) {

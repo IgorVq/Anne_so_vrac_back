@@ -1,4 +1,3 @@
-// controllers/productImageControllers.js
 const ProductsImageServices = require('../services/productImageServices');
 
 async function createProductImage(req, res, next) {

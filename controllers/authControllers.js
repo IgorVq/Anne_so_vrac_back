@@ -1,4 +1,3 @@
-// controllers/authControllers.js
 const bcrypt = require('bcryptjs');
 const CredentialsServices = require('../services/credentialsServices');
 const RolesServices = require('../services/rolesServices');
@@ -53,7 +52,6 @@ async function register(req, res, next) {
       role,
     } = req.body || {};
 
-    // Validation minimale
     if (!email || !password || !phone || !first_name || !last_name) {
       return next({
         status: 400,
@@ -94,11 +92,9 @@ async function register(req, res, next) {
       });
     }
 
-    // Rôle : si pas fourni, on met 0 (utilisateur)
     const adminFlag = role && role.admin ? role.admin : 0;
     const responseRole = await RolesServices.createRole({ admin: adminFlag });
     if (!responseRole) {
-      // Nettoyer les credentials créés en cas d'erreur de création du rôle
       await CredentialsServices.deleteCredential(responseCredential.id_credential);
       return next({
         status: 500,
@@ -116,7 +112,6 @@ async function register(req, res, next) {
 
     const createdUser = await UsersServices.createUser(newUser);
     if (!createdUser) {
-      // Nettoyer les credentials et le rôle créés en cas d'erreur
       await CredentialsServices.deleteCredential(responseCredential.id_credential);
       await RolesServices.deleteRole(responseRole.id_role);
       return next({
@@ -126,7 +121,6 @@ async function register(req, res, next) {
       });
     }
 
-    // Récupérer l'utilisateur complet avec ses credentials et son rôle
     const completeUser = await UsersServices.getUserByEmail(email);
     if (!completeUser) {
       return next({
@@ -227,7 +221,7 @@ async function forgotPassword(req, res, next) {
     }
 
     const token = jwt.sign({ id: user.id_user }, process.env.JWT_SECRET, {
-      expiresIn: 86400, // 24 heures
+      expiresIn: 86400,
     });
 
     await transporter.sendMail({

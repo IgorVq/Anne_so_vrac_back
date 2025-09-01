@@ -2,10 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
-const errorHandler = require('../middleware/errorHandler'); // chemin depuis src/
+const errorHandler = require('../middleware/errorHandler');
 
 
-// importe toutes tes routes existantes
 const userRoutes = require('../routes/usersRoutes');
 const authRoutes = require('../routes/authRoutes');
 const cartRoutes = require('../routes/cartRoutes');

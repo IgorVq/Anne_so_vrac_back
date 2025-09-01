@@ -1,4 +1,3 @@
-// controllers/reservationControllers.js
 const ReservationServices = require('../services/reservationServices');
 const CartServices = require('../services/cartServices');
 const ReservationProductServices = require('../services/reservationProductsServices');
@@ -38,7 +37,6 @@ async function sendAvailableOrderEmail(reservation, reservationProducts, user) {
       `,
     });
   } catch (error) {
-    // On log juste, on ne bloque pas la requête pour l'e-mail.
     console.error("Erreur lors de l'envoi de l'email de disponibilité:", error);
   }
 }
@@ -56,7 +54,6 @@ async function updateReservationStatus(req, res, next) {
     const reservationProducts = await ReservationProductServices.getAllReservationProductsByReservationId(id);
     const updatedReservation = await ReservationServices.updateReservation(id, { status });
 
-    // Envoi e-mail informatif (exemple: statut devient "available")
     if (updatedReservation && req.user) {
       await sendAvailableOrderEmail(reservation, reservationProducts, req.user);
     }
@@ -83,7 +80,6 @@ async function applyPromoCode(req, res, next) {
     }
     const promoCodeData = await PromoCodeServices.checkPromoCodeIsValid(req.body.promoCode, req.user.id);
     if (!promoCodeData) {
-      // comportement existant : 200 avec message informatif
       return res.status(200).json({ message: 'Code promo invalide ou déjà utilisé' });
     }
 

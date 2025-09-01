@@ -1,4 +1,3 @@
-// controllers/productSizesControllers.js
 const ProductSizesServices = require('../services/productSizesServices');
 
 async function createProductSize(req, res, next) {

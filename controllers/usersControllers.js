@@ -1,4 +1,3 @@
-// controllers/usersControllers.js
 const UsersServices = require('../services/usersServices');
 
 async function getAllUsers(_req, res, next) {
@@ -19,7 +18,7 @@ async function createUser(req, res, next) {
     const created = await UsersServices.createUser(req.body);
     return res.status(201).json(created);
   } catch (error) {
-    return next(error); // 1062 sur id_credential unique -> DUPLICATE
+    return next(error);
   }
 }
 
@@ -98,15 +97,9 @@ async function getUserByEmail(req, res, next) {
     }
 }
 
-/**
- * Si tu avais une route de contact (ex: POST /users/contact),
- * on conserve le handler afin de ne RIEN casser côté front.
- * On délègue à UsersServices.contactMail(payload) (ou le nom existant).
- */
 async function contactMail(req, res, next) {
   try {
     const result = await UsersServices.contactMail(req.body);
-    // on renvoie 200 avec un message ou les métadonnées utiles
     return res.status(200).json(result || { message: 'Message envoyé' });
   } catch (error) {
     return next(error);
@@ -119,7 +112,7 @@ module.exports = {
   getUserById,
   updateUser,
   deleteUser,
-  contactMail, // <— conservé si utilisé par tes routes/front
+  contactMail,
   getMe,
   updateMe,
   getUserByEmail,

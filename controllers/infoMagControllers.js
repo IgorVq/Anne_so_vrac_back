@@ -1,4 +1,3 @@
-// controllers/infoMagControllers.js
 const InfoMagServices = require('../services/infoMagServices');
 
 async function createInfoMag(req, res, next) {
@@ -67,7 +66,6 @@ async function deleteInfoMag(req, res, next) {
   }
 }
 
-// ===== Topbar spécifiques =====
 async function getTopbarMessages(_req, res, next) {
   try {
     const messages = await InfoMagServices.getTopbarMessages();

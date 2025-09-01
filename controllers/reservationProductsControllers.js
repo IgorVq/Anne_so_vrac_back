@@ -1,4 +1,3 @@
-// controllers/reservationProductsControllers.js
 const ReservationProductsServices = require('../services/reservationProductsServices');
 
 async function createReservationProduct(req, res, next) {
